@@ -353,6 +353,8 @@ pub struct WebViewAttributes<'a> {
   /// An id that will be passed when this webview makes requests in certain callbacks.
   pub id: Option<WebViewId<'a>>,
 
+  pub disable_background_throttling: bool,
+
   /// Web context to be shared with this webview.
   pub context: Option<&'a mut WebContext>,
 
@@ -581,6 +583,7 @@ impl<'a> Default for WebViewAttributes<'a> {
     Self {
       id: Default::default(),
       context: None,
+      disable_background_throttling: false,
       user_agent: None,
       visible: true,
       transparent: false,
@@ -1131,6 +1134,14 @@ impl<'a> WebViewBuilder<'a> {
   pub fn with_incognito(self, incognito: bool) -> Self {
     self.and_then(|mut b| {
       b.attrs.incognito = incognito;
+      Ok(b)
+    })
+  }
+
+  /// Disables background throttling for the webview. **macOS** is the only platform this currently works
+  pub fn with_disable_background_throttling(self, disable: bool) -> Self {
+    self.and_then(|mut b| {
+      b.attrs.disable_background_throttling = disable;
       Ok(b)
     })
   }

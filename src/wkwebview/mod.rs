@@ -63,8 +63,8 @@ use crate::wkwebview::ios::WKWebView::WKWebView;
 use objc2_web_kit::WKWebView;
 
 use objc2_web_kit::{
-  WKAudiovisualMediaTypes, WKURLSchemeHandler, WKUserContentController, WKUserScript,
-  WKUserScriptInjectionTime, WKWebViewConfiguration, WKWebsiteDataStore,
+  WKAudiovisualMediaTypes, WKInactiveSchedulingPolicy, WKURLSchemeHandler, WKUserContentController,
+  WKUserScript, WKUserScriptInjectionTime, WKWebViewConfiguration, WKWebsiteDataStore,
 };
 use once_cell::sync::Lazy;
 use raw_window_handle::{HasWindowHandle, RawWindowHandle};
@@ -357,6 +357,16 @@ impl InnerWebView {
           webview.setAutoresizingMask(
             NSAutoresizingMaskOptions::NSViewHeightSizable
               | NSAutoresizingMaskOptions::NSViewWidthSizable,
+          );
+        }
+
+        if attributes.disable_background_throttling {
+          // Set inactive scheduling policy
+          _preference.setValue_forKey(
+            Some(&NSNumber::numberWithInt(
+              WKInactiveSchedulingPolicy::None.0.try_into().unwrap(),
+            )),
+            ns_string!("inactiveSchedulingPolicy"),
           );
         }
 
